@@ -299,7 +299,7 @@ namespace MonoBrick.EV3
 		/// <param name='reply'>
 		/// If set to <c>true</c> the brick will send a reply
 		/// </param>
-		public void StartProgram(string name, bool reply){
+		public void StartProgram(string name, bool reply, bool delay = true){
 			var command = new Command(0,8, 400,reply);
 			command.Append(ByteCodes.File);
 			command.Append(FileSubCodes.LoadImage);
@@ -313,7 +313,7 @@ namespace MonoBrick.EV3
 			command.Append(4, VariableScope.Local);
 			command.Append(0,ParameterFormat.Short);
 			connection.Send(command);
-			System.Threading.Thread.Sleep(5000);
+			if(delay) System.Threading.Thread.Sleep(5000);
 			if(reply){
 				var brickReply = connection.Receive();
 				Error.CheckForError(brickReply,400);
@@ -351,23 +351,23 @@ namespace MonoBrick.EV3
 		/// The running program.
 		/// </returns>
 		public string GetRunningProgram(){
-            var command = new Command(0, 8, 400, true);
-            command.Append(ByteCodes.File);
-            command.Append(FileSubCodes.LoadImage);
-            command.Append((byte)ProgramSlots.User, ConstantParameterType.Value);
-            command.Append("", ConstantParameterType.Value);
-            command.Append(0, VariableScope.Local);
-            command.Append(4, VariableScope.Local);
+            var command = new Command(4, 0, 198+(ushort)ByteCodes.ProgramInfo, true);
             command.Append(ByteCodes.ProgramInfo);
-            command.Append((byte)ProgramSlots.User);
-            command.Append(0, VariableScope.Local);
-            command.Append(4, VariableScope.Local);
-            command.Append(0, ParameterFormat.Short);
-            connection.Send(command);
-            System.Threading.Thread.Sleep(5000);
-            var brickReply = connection.Receive();
-            //Error.CheckForError(brickReply, 400);
-  			return "Program Info: " + brickReply;
+
+            command.Append((byte)ProgramSlots.User, ConstantParameterType.Value);
+            //command.Append(number)
+            //command.Append(8, ConstantParameterType.Value);
+
+            //command.Append(number)
+            //command.Append(8, ConstantParameterType.Value);
+
+            //command.Append((byte)0, VariableScope.Global);
+
+            var brickReply = connection.SendAndReceive(command);
+            //Error.CheckForError(brickReply, 102);
+            brickReply.print();
+            //return brickReply.GetData(3);
+            return "junk";
 		}
 
 		/// <summary>
