@@ -6,6 +6,8 @@
 /packages
 */.svn/*
 
+# Exclude Logs
+UpgradeLog.*
  
 # Exclude temp nibs, swap files and MonoDevelop user preferences
 *~.nib

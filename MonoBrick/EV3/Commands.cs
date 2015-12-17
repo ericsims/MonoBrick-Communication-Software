@@ -216,7 +216,8 @@ namespace MonoBrick.EV3
 		//VM
 		ProgramStop	= 0x02,
 		ProgramStart = 0x03,
-		
+		ProgramInfo = 0x0C,
+
 		//Move
 		InitBytes = 0x2F,
 		

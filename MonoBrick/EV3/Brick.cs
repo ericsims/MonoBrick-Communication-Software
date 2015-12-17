@@ -351,7 +351,23 @@ namespace MonoBrick.EV3
 		/// The running program.
 		/// </returns>
 		public string GetRunningProgram(){
-			return "";
+            var command = new Command(0, 8, 400, true);
+            command.Append(ByteCodes.File);
+            command.Append(FileSubCodes.LoadImage);
+            command.Append((byte)ProgramSlots.User, ConstantParameterType.Value);
+            command.Append("", ConstantParameterType.Value);
+            command.Append(0, VariableScope.Local);
+            command.Append(4, VariableScope.Local);
+            command.Append(ByteCodes.ProgramInfo);
+            command.Append((byte)ProgramSlots.User);
+            command.Append(0, VariableScope.Local);
+            command.Append(4, VariableScope.Local);
+            command.Append(0, ParameterFormat.Short);
+            connection.Send(command);
+            System.Threading.Thread.Sleep(5000);
+            var brickReply = connection.Receive();
+            //Error.CheckForError(brickReply, 400);
+  			return "Program Info: " + brickReply;
 		}
 
 		/// <summary>
